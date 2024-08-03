@@ -55,6 +55,7 @@ public class StreamsStuff {
 //                })
 //                .sum();
 //        System.out.println(sum);
+        //Adding a comment just to commit a git push test
 
         int sum2 = peopleText
                 .lines()
