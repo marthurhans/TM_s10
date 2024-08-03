@@ -1,5 +1,6 @@
 package com.mikehans.collections;
 
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
@@ -53,15 +54,20 @@ public class StreamsStuff {
 //        System.out.println(sum);
         //Adding a comment just to commit a git push test
 
+        Predicate<Employee> dummyEmpSelector = (employee -> "N/A".equals(employee.getLastName()));
+        Predicate<Employee> overFiveKSelector = e -> e.getSalary() > 5000;
         int sum2 = peopleText
                 .lines()
+//                .filter(not(s -> s.contains("Programmerzzzzz")))
+//                .filter(((Predicate<String>)  s -> s.contains("Programmerzzzzz")).negate())
                 .map(Employee::createEmployee)
                 .map(e -> (Employee) e)
+                .filter(dummyEmpSelector.negate().and(overFiveKSelector))
 //                .distinct()
 //                .filter(not(e -> e.getLastName().equals("N/A")))
 //                .filter(not(e -> e instanceof Programmer))
-                .filter((e -> e.getSalary() > 5000))
-                .filter((e -> e.getSalary() < 10000))
+//                .filter((e -> e.getSalary() > 5000))
+//                .filter((e -> e.getSalary() < 10000))
                 .collect(Collectors.toSet()).stream()
                 .sorted(comparing(Employee::getLastName)
                             //The lambda version:
