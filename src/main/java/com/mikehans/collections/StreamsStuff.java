@@ -1,11 +1,6 @@
 package com.mikehans.collections;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
@@ -14,6 +9,7 @@ public class StreamsStuff {
     public static void main(String[] args) {
         String peopleText = """
             Flinstone, Fred, 1/1/1900, Programmer, {locpd=2000,yoe=10,iq=140}
+            
             Flinstone2, Fred2, 1/1/1900, Programmer, {locpd=1300,yoe=14,iq=100}
             Flinstone3, Fred3, 1/1/1900, Programmer, {locpd=2300,yoe=8,iq=105}
             Flinstone4, Fred4, 1/1/1900, Programmer, {locpd=1630,yoe=3,iq=115}
@@ -61,11 +57,17 @@ public class StreamsStuff {
                 .lines()
                 .map(Employee::createEmployee)
                 .map(e -> (Employee) e)
+//                .distinct()
+//                .filter(not(e -> e.getLastName().equals("N/A")))
+//                .filter(not(e -> e instanceof Programmer))
+                .filter((e -> e.getSalary() > 5000))
+                .filter((e -> e.getSalary() < 10000))
+                .collect(Collectors.toSet()).stream()
                 .sorted(comparing(Employee::getLastName)
                             //The lambda version:
                             //(x,y) ->x.getLastName().compareTo(y.getLastName())
                         .thenComparing(Employee::getFirstName)
-                        .thenComparing(Employee::getSalary).reversed())
+                        .thenComparing(Employee::getSalary))
                 .mapToInt(StreamsStuff::showEmpAndGetSalary)
                 .sum();
         System.out.println(sum2);
