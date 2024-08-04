@@ -1,6 +1,7 @@
 package com.mikehans.collections;
 
-import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class StreamsStuff {
 
@@ -29,16 +30,26 @@ public class StreamsStuff {
             Rubble, Betty, 4/4/1915, CEO, {aveStockPrice=300}
             """;
 
-        peopleText
+        Predicate<Employee> dummySelector = e -> e.getLastName().equals("N/A");
+        Optional<Employee> optionEmp = peopleText
+//        boolean allOver3k = peopleText
                 .lines()
                 .map(Employee::createEmployee)
                 .map(e -> (Employee)e)
+                .filter(dummySelector.negate())
+                .filter(e -> e.getSalary() < 0)
+                .findFirst();
+        System.out.println(optionEmp
                 .map(Employee::getFirstName)
-                .map(firstName -> firstName.split(""))
-                .flatMap(Arrays::stream)
-                .map(String::toLowerCase)
-                .distinct()
-                .forEach(System.out::print);
+                .orElse("Nobody"));
+//                .noneMatch(e -> e.getSalary() < 0);
+//        System.out.println(allOver3k);
+//                .map(Employee::getFirstName)
+//                .map(firstName -> firstName.split(""))
+//                .flatMap(Arrays::stream)
+//                .map(String::toLowerCase)
+//                .distinct()
+//                .forEach(System.out::print);
 
 
 //        try {
