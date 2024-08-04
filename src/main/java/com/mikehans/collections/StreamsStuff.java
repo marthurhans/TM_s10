@@ -1,14 +1,15 @@
 package com.mikehans.collections;
 
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import static java.util.Comparator.comparing;
+import java.util.Arrays;
 
 public class StreamsStuff {
 
     public static void main(String[] args) {
         String peopleText = """
+            Flinstone, Fred, 1/1/1900, Programmer, {locpd=2000,yoe=10,iq=140}
+            Flinstone, Fred, 1/1/1900, Programmer, {locpd=2000,yoe=10,iq=140}
+            Flinstone, Fred, 1/1/1900, Programmer, {locpd=2000,yoe=10,iq=140}
+            Flinstone, Fred, 1/1/1900, Programmer, {locpd=2000,yoe=10,iq=140}
             Flinstone, Fred, 1/1/1900, Programmer, {locpd=2000,yoe=10,iq=140}
             
             Flinstone2, Fred2, 1/1/1900, Programmer, {locpd=1300,yoe=14,iq=100}
@@ -27,6 +28,17 @@ public class StreamsStuff {
             Flinstone5, Wilma5, 3/3/1910, Analyst, {projectCount=9}
             Rubble, Betty, 4/4/1915, CEO, {aveStockPrice=300}
             """;
+
+        peopleText
+                .lines()
+                .map(Employee::createEmployee)
+                .map(e -> (Employee)e)
+                .map(Employee::getFirstName)
+                .map(firstName -> firstName.split(""))
+                .flatMap(Arrays::stream)
+                .map(String::toLowerCase)
+                .distinct()
+                .forEach(System.out::print);
 
 
 //        try {
@@ -54,29 +66,29 @@ public class StreamsStuff {
 //        System.out.println(sum);
         //Adding a comment just to commit a git push test
 
-        Predicate<Employee> dummyEmpSelector = (employee -> "N/A".equals(employee.getLastName()));
-        Predicate<Employee> overFiveKSelector = e -> e.getSalary() > 5000;
-        int sum2 = peopleText
-                .lines()
-//                .filter(not(s -> s.contains("Programmerzzzzz")))
-//                .filter(((Predicate<String>)  s -> s.contains("Programmerzzzzz")).negate())
-                .map(Employee::createEmployee)
-                .map(e -> (Employee) e)
-                .filter(dummyEmpSelector.negate().and(overFiveKSelector))
-//                .distinct()
-//                .filter(not(e -> e.getLastName().equals("N/A")))
-//                .filter(not(e -> e instanceof Programmer))
-//                .filter((e -> e.getSalary() > 5000))
-//                .filter((e -> e.getSalary() < 10000))
-                .collect(Collectors.toSet()).stream()
-                .sorted(comparing(Employee::getLastName)
-                            //The lambda version:
-                            //(x,y) ->x.getLastName().compareTo(y.getLastName())
-                        .thenComparing(Employee::getFirstName)
-                        .thenComparing(Employee::getSalary))
-                .mapToInt(StreamsStuff::showEmpAndGetSalary)
-                .sum();
-        System.out.println(sum2);
+//        Predicate<Employee> dummyEmpSelector = (employee -> "N/A".equals(employee.getLastName()));
+//        Predicate<Employee> overFiveKSelector = e -> e.getSalary() > 5000;
+//        int sum2 = peopleText
+//                .lines()
+////                .filter(not(s -> s.contains("Programmerzzzzz")))
+////                .filter(((Predicate<String>)  s -> s.contains("Programmerzzzzz")).negate())
+//                .map(Employee::createEmployee)
+//                .map(e -> (Employee) e)
+//                .filter(dummyEmpSelector.negate().and(overFiveKSelector))
+////                .distinct()
+////                .filter(not(e -> e.getLastName().equals("N/A")))
+////                .filter(not(e -> e instanceof Programmer))
+////                .filter((e -> e.getSalary() > 5000))
+////                .filter((e -> e.getSalary() < 10000))
+//                .collect(Collectors.toSet()).stream()
+//                .sorted(comparing(Employee::getLastName)
+//                            //The lambda version:
+//                            //(x,y) ->x.getLastName().compareTo(y.getLastName())
+//                        .thenComparing(Employee::getFirstName)
+//                        .thenComparing(Employee::getSalary))
+//                .mapToInt(StreamsStuff::showEmpAndGetSalary)
+//                .sum();
+//        System.out.println(sum2);
 
 //                .forEach((String s) -> System.out.println(s));
 //                .forEach(s -> System.out.println(s));
@@ -120,8 +132,6 @@ public class StreamsStuff {
 //                .map(String::toUpperCase)
 //                .forEach(System.out::println);
         //This is a comment added to test git/github
-
-
     }
 
     public static int showEmpAndGetSalary(IEmployee e) {
